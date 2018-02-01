@@ -1,0 +1,843 @@
+﻿
+
+CREATE TABLE [dbo].[Department]
+(
+	[dId] INT NOT NULL PRIMARY KEY IDENTITY(101, 1), 
+    [Name] VARCHAR(50) NULL
+)
+GO
+
+CREATE TABLE [dbo].[Employee]
+(
+	[eId] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [Name] VARCHAR(50) NULL, 
+    [DOJ] DATE NULL, 
+    [Salary] MONEY NULL, 
+    [dId] INT NULL, 
+    CONSTRAINT [FK_Employee_ToTable] FOREIGN KEY (dId) REFERENCES [Department]([dId])
+)
+GO
+
+CREATE VIEW [dbo].[EmpByDept]
+	AS 
+SELECT e.eId,
+       e.Name AS [empName], 
+	   e.Salary, 
+	   e.DOJ AS [DateOfJoin], 
+	   d.Name AS [dName] 
+	   FROM Employee e INNER JOIN Department d
+ON e.dId = d.dId
+GO
+
+CREATE TABLE Categories
+(
+  CategoryID int IDENTITY (101,1) PRIMARY KEY NOT NULL,
+  CategoryName varchar(40)
+)
+GO
+
+
+---------------------------------------------------------------------------------
+-- CREATING TABLE Stock
+---------------------------------------------------------------------------------
+CREATE TABLE Stock
+(
+  PID varchar(10) PRIMARY KEY NOT NULL,
+  SQty int,
+  RLevel int,
+  SalesPrice Money
+)
+GO
+
+
+---------------------------------------------------------------------------------
+-- CREATING TABLE Purchase
+---------------------------------------------------------------------------------
+CREATE TABLE Purchase
+(
+  PNO int IDENTITY (1,1) PRIMARY KEY NOT NULL,
+  PID varchar(10) NOT NULL,
+  PName varchar(40),
+  UPrice money,
+  Qty int,
+  PDate datetime,
+  RLevel int,
+  CategoryID int FOREIGN KEY REFERENCES Categories(CategoryID),
+)
+GO
+
+---------------------------------------------------------------------------------
+-- CREATING TABLE Customers
+---------------------------------------------------------------------------------
+CREATE TABLE Customers
+(
+  CustomerID int IDENTITY PRIMARY KEY NOT NULL,
+  CustomerName varchar(50),
+  Phone varchar(15),
+  Email varchar(40)
+)
+GO
+
+---------------------------------------------------------------------------------
+-- CREATING TABLE Orders
+---------------------------------------------------------------------------------
+CREATE TABLE Orders
+(
+  ONO int IDENTITY PRIMARY KEY NOT NULL,
+  CustomerID int FOREIGN KEY REFERENCES Customers(CustomerID),
+  ODate datetime,
+  GrandTotal money,
+  ShippedDate DateTime
+)
+GO
+
+---------------------------------------------------------------------------------
+-- CREATING TABLE OrderDetails
+---------------------------------------------------------------------------------
+CREATE TABLE OrderDetails
+(
+  ONO int FOREIGN KEY REFERENCES Orders(ONO),
+  PID varchar(10) FOREIGN KEY REFERENCES Stock(PID),
+  SaleQty int,
+  SalePrice money,
+  SaleTotal AS (SaleQty * SalePrice)
+  PRIMARY KEY (ONO,PID)
+)
+GO
+
+---------------------------------------------------------------------------------
+-- CREATING TABLE UserDetails
+---------------------------------------------------------------------------------
+CREATE TABLE UserDetails
+(
+  UserID varchar(30) PRIMARY KEY NOT NULL,
+  UserPass varchar(30) NOT NULL,
+  UserRole varchar(10) NOT NULL
+)
+GO
+
+---------------------------------------------------------------------------------
+-- CREATING TRIGGER updatestock
+---------------------------------------------------------------------------------
+CREATE TRIGGER updatestock
+ON Purchase
+FOR INSERT
+AS
+DECLARE @PID varchar(10),
+@SQty int,
+@RLevel int,
+@UPrice money
+SELECT @PID = PID,@SQty = Qty,@RLevel = RLevel,@UPrice= UPrice FROM INSERTED
+IF EXISTS (SELECT 'TRUE' FROM Inserted i JOIN Stock s ON i.PID = s.PID)
+BEGIN
+  UPDATE Stock SET  SQty = SQty + @SQty WHERE Stock.PID = @PID
+END
+ELSE
+BEGIN
+ INSERT INTO Stock VALUES (@PID,@SQty,@RLevel,@UPrice+@UPrice*.1)
+END
+GO
+ 
+---------------------------------------------------------------------------------
+-- CREATING TRIGGER decreasestock
+---------------------------------------------------------------------------------
+CREATE TRIGGER decreasestock
+ON OrderDetails
+FOR INSERT
+AS
+DECLARE @PID varchar(10),
+@SQty int,
+@RLevel int
+SELECT @PID = PID,@SQty = SaleQty FROM INSERTED
+IF EXISTS (SELECT 'TRUE' FROM Inserted i JOIN Stock s ON i.PID = s.PID 
+               WHERE s.SQty >= @SQty)
+BEGIN
+  UPDATE Stock SET  SQty = SQty - @SQty WHERE Stock.PID = @PID
+END
+ELSE
+BEGIN
+ RAISERROR ('INVALID Product or Stock not available...',16,1)
+ ROLLBACK TRAN
+END
+GO
+
+------------------ Store Procedure ----------------------------------------------
+-- Categories
+---------------------------------------------------------------------------------
+
+-- ==========================================================================================
+-- Entity Name:	CategoriesGetAll
+-- Create date:	12/12/2011 9:11:04 AM
+-- Description:	This stored procedure is intended for selecting all rows from Categories table
+-- ==========================================================================================
+Create Procedure CategoriesGetAll
+As
+Begin
+	Select 
+		[CategoryID],
+		[CategoryName]
+	From Categories
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	CategoriesGetRecord
+-- Create date:	12/12/2011 9:11:04 AM
+-- Description:	This stored procedure is intended for selecting a specific row from Categories table
+-- ==========================================================================================
+Create Procedure CategoriesGetRecord
+	@CategoryID int
+As
+Begin
+	Select 
+		[CategoryID],
+		[CategoryName]
+	From Categories
+	Where
+		[CategoryID] = @CategoryID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	CategoriesInsert
+-- Create date:	12/12/2011 9:11:04 AM
+-- Description:	This stored procedure is intended for inserting values to Categories table
+-- ==========================================================================================
+Create Procedure CategoriesInsert
+	@CategoryName varchar(40) = NULL,
+	@ReferenceID int OUTPUT
+As
+Begin
+	Insert Into Categories
+		([CategoryName])
+	Values
+		(@CategoryName)
+	
+	Select @ReferenceID = @@IDENTITY
+
+	Return @ReferenceID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	CategoriesUpdate
+-- Create date:	12/12/2011 9:11:04 AM
+-- Description:	This stored procedure is intended for updating Categories table
+-- ==========================================================================================
+Create Procedure CategoriesUpdate
+	@CategoryID int,
+	@CategoryName varchar(40)
+As
+Begin
+	Update Categories
+	Set
+		[CategoryName] = @CategoryName
+	Where		
+		[CategoryID] = @CategoryID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	CategoriesDelete
+-- Create date:	12/12/2011
+-- Description:	This stored procedure is intended for deleting a specific row from Categories table
+-- ==========================================================================================
+Create Procedure CategoriesDelete
+	@CategoryID int
+As
+Begin
+	Delete Categories
+	Where
+		[CategoryID] = @CategoryID
+End
+GO
+
+
+-- ==========================================================================================
+-- Purchase
+-- ==========================================================================================
+
+-- ==========================================================================================
+-- Entity Name:	PurchaseGetAll
+-- Create date:	12/12/2011 9:11:04 AM
+-- Description:	This stored procedure is intended for selecting all rows from Purchase table
+-- ==========================================================================================
+Create Procedure PurchaseGetAll
+As
+Begin
+	Select 
+		[PNO],
+		[PID],
+		[PName],
+		[UPrice],
+		[Qty],
+		[PDate],
+		[RLevel],
+		[SID],
+		[CategoryID]
+	From Purchase
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	PurchaseGetRecord
+-- Create date:	12/12/2011 9:11:04 AM
+-- Description:	This stored procedure is intended for selecting a specific row from Purchase table
+-- ==========================================================================================
+Create Procedure PurchaseGetRecord
+	@PNO int,
+	@SID int,
+	@CategoryID int
+As
+Begin
+	Select 
+		[PNO],
+		[PID],
+		[PName],
+		[UPrice],
+		[Qty],
+		[PDate],
+		[RLevel],
+		[SID],
+		[CategoryID]
+	From Purchase
+	Where
+		[PNO] = @PNO
+		and [SID] = @SID
+		and [CategoryID] = @CategoryID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	PurchaseInsert
+-- Create date:	12/12/2011 9:11:04 AM
+-- Description:	This stored procedure is intended for inserting values to Purchase table
+-- ==========================================================================================
+Create Procedure PurchaseInsert
+	@PID varchar(10),
+	@PName varchar(40) = NULL,
+	@UPrice money = NULL,
+	@Qty int = NULL,
+	@PDate datetime = NULL,
+	@RLevel int = NULL,
+	@SID int = NULL,
+	@CategoryID int = NULL
+As
+Begin
+	Insert Into Purchase
+		([PID],
+		[PName],
+		[UPrice],
+		[Qty],
+		[PDate],
+		[RLevel],
+		[SID],
+		[CategoryID])
+	Values
+		(@PID,
+		@PName,
+		@UPrice,
+		@Qty,
+		@PDate,
+		@RLevel,
+		@SID,
+		@CategoryID)
+
+	Declare @ReferenceID int
+	Select @ReferenceID = @@IDENTITY
+
+	Return @ReferenceID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	PurchaseUpdate
+-- Create date:	12/12/2011 9:11:04 AM
+-- Description:	This stored procedure is intended for updating Purchase table
+-- ==========================================================================================
+Create Procedure PurchaseUpdate
+	@PNO int,
+	@PID varchar(10),
+	@PName varchar(40),
+	@UPrice money,
+	@Qty int,
+	@PDate datetime,
+	@RLevel int,
+	@SID int,
+	@CategoryID int
+As
+Begin
+	Update Purchase
+	Set
+		[PID] = @PID,
+		[PName] = @PName,
+		[UPrice] = @UPrice,
+		[Qty] = @Qty,
+		[PDate] = @PDate,
+		[RLevel] = @RLevel
+	Where		
+		[PNO] = @PNO
+		and [SID] = @SID
+		and [CategoryID] = @CategoryID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	PurchaseDelete
+-- Create date:	12/12/2011
+-- Description:	This stored procedure is intended for deleting a specific row from Purchase table
+-- ==========================================================================================
+Create Procedure PurchaseDelete
+	@PNO int
+As
+Begin
+	Delete Purchase
+	Where
+		[PNO] = @PNO
+End
+GO
+
+-- ==========================================================================================
+-- Customer
+-- ==========================================================================================
+
+-- ==========================================================================================
+-- Entity Name:	CustomersGetAll
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for selecting all rows from Customers table
+-- ==========================================================================================
+Create Procedure CustomersGetAll
+As
+Begin
+	Select 
+		[CustomerID],
+		[CustomerName],
+		[Phone],
+		[Email]
+	From Customers
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	CustomersGetRecord
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for selecting a specific row from Customers table
+-- ==========================================================================================
+Create Procedure CustomersGetRecord
+	@CustomerID int
+As
+Begin
+	Select 
+		[CustomerID],
+		[CustomerName],
+		[Phone],
+		[Email]
+	From Customers
+	Where
+		[CustomerID] = @CustomerID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	CustomersInsert
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for inserting values to Customers table
+-- ==========================================================================================
+Create Procedure CustomersInsert
+	@CustomerName varchar(50) = NULL,
+	@Phone varchar(15) = NULL,
+	@Email varchar(40) = NULL
+As
+Begin
+	Insert Into Customers
+		([CustomerName],
+		[Phone],
+		[Email])
+	Values
+		(@CustomerName,
+		@Phone,
+		@Email)
+
+	Declare @ReferenceID int
+	Select @ReferenceID = @@IDENTITY
+	Return @ReferenceID
+End
+
+GO
+
+-- ==========================================================================================
+-- Entity Name:	CustomersUpdate
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for updating Customers table
+-- ==========================================================================================
+Create Procedure CustomersUpdate
+	@CustomerID int,
+	@CustomerName varchar(50),
+	@Phone varchar(15),
+	@Email varchar(40)
+As
+Begin
+	Update Customers
+	Set
+		[CustomerName] = @CustomerName,
+		[Phone] = @Phone,
+		[Email] = @Email
+	Where		
+		[CustomerID] = @CustomerID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	CustomersDelete
+-- Create date:	12/12/2011
+-- Description:	This stored procedure is intended for deleting a specific row from Customers table
+-- ==========================================================================================
+Create Procedure CustomersDelete
+	@CustomerID int
+As
+Begin
+	Delete Customers
+	Where
+		[CustomerID] = @CustomerID
+End
+GO
+
+-- ==========================================================================================
+-- Orders
+-- ==========================================================================================
+
+-- ==========================================================================================
+-- Entity Name:	OrdersGetAll
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for selecting all rows from Orders table
+-- ==========================================================================================
+Create Procedure OrdersGetAll
+As
+Begin
+	Select 
+		[ONO],
+		[CustomerID],
+		[ODate],
+		[GrandTotal],
+		[ShippedDate]
+	From Orders
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	OrdersGetRecord
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for selecting a specific row from Orders table
+-- ==========================================================================================
+Create Procedure OrdersGetRecord
+	@ONO int,
+	@CustomerID int
+As
+Begin
+	Select 
+		[ONO],
+		[CustomerID],
+		[ODate],
+		[GrandTotal],
+		[ShippedDate]
+	From Orders
+	Where
+		[ONO] = @ONO
+		and [CustomerID] = @CustomerID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	OrdersInsert
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for inserting values to Orders table
+-- ==========================================================================================
+Create Procedure OrdersInsert
+	@CustomerID int = NULL,
+	@ODate datetime = NULL,
+	@GrandTotal money = NULL,
+	@ShippedDate datetime = NULL
+As
+Begin
+	Insert Into Orders
+		([CustomerID],
+		[ODate],
+		[GrandTotal],
+		[ShippedDate])
+	Values
+		(@CustomerID,
+		@ODate,
+		@GrandTotal,
+		@ShippedDate)
+
+	Declare @ReferenceID int
+	Select @ReferenceID = @@IDENTITY
+
+	Return @ReferenceID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	OrdersUpdate
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for updating Orders table
+-- ==========================================================================================
+Create Procedure OrdersUpdate
+	@ONO int,
+	@CustomerID int,
+	@ODate datetime,
+	@GrandTotal money,
+	@ShippedDate datetime
+As
+Begin
+	Update Orders
+	Set
+		[ODate] = @ODate,
+		[GrandTotal] = @GrandTotal,
+		[ShippedDate] = @ShippedDate
+	Where		
+		[ONO] = @ONO
+		and [CustomerID] = @CustomerID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	OrdersDelete
+-- Create date:	12/12/2011
+-- Description:	This stored procedure is intended for deleting a specific row from Orders table
+-- ==========================================================================================
+Create Procedure OrdersDelete
+	@ONO int
+As
+Begin
+	Delete Orders
+	Where
+		[ONO] = @ONO
+End
+GO
+
+-- ==========================================================================================
+-- OrderDetails
+-- ==========================================================================================
+
+-- ==========================================================================================
+-- Entity Name:	OrderDetailsGetAll
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for selecting all rows from OrderDetails table
+-- ==========================================================================================
+Create Procedure OrderDetailsGetAll
+As
+Begin
+	Select 
+		[ONO],
+		[PID],
+		[SaleQty],
+		[SalePrice],
+		[SaleTotal]
+	From OrderDetails
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	OrderDetailsGetRecord
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for selecting a specific row from OrderDetails table
+-- ==========================================================================================
+Create Procedure OrderDetailsGetRecord
+	@ONO int,
+	@PID varchar(10)
+As
+Begin
+	Select 
+		[ONO],
+		[PID],
+		[SaleQty],
+		[SalePrice],
+		[SaleTotal]
+	From OrderDetails
+	Where
+		[ONO] = @ONO
+		and [PID] = @PID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	OrderDetailsInsert
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for inserting values to OrderDetails table
+-- ==========================================================================================
+Create Procedure OrderDetailsInsert
+	@ONO int,
+	@PID varchar(10),
+	@SaleQty int = NULL,
+	@SalePrice money = NULL	
+As
+Begin
+	Insert Into OrderDetails
+		([ONO],
+		[PID],
+		[SaleQty],
+		[SalePrice])
+	Values
+		(@ONO,
+		@PID,
+		@SaleQty,
+		@SalePrice)
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	OrderDetailsUpdate
+-- Create date:	12/12/2011 10:06:20 AM
+-- Description:	This stored procedure is intended for updating OrderDetails table
+-- ==========================================================================================
+Create Procedure OrderDetailsUpdate
+	@ONO int,
+	@PID varchar(10),
+	@SaleQty int,
+	@SalePrice money
+As
+Begin
+	Update OrderDetails
+	Set
+		[SaleQty] = @SaleQty,
+		[SalePrice] = @SalePrice
+	Where		
+		[ONO] = @ONO
+		and [PID] = @PID
+End
+GO
+
+-- ==========================================================================================
+-- Entity Name:	OrderDetailsDelete
+-- Create date:	12/12/2011
+-- Description:	This stored procedure is intended for deleting a specific row from OrderDetails table
+-- ==========================================================================================
+Create Procedure OrderDetailsDelete
+	@ONO int,
+	@PID varchar(10)
+As
+Begin
+	Delete OrderDetails
+	Where
+		[ONO] = @ONO
+		and [PID] = @PID
+End
+GO
+
+INSERT INTO Categories VALUES('Computer')
+INSERT INTO Categories VALUES('Electronics')
+
+INSERT INTO Purchase VALUES('S1001','Hardisk',4200,10,'2011/01/02',5,101,101)
+INSERT INTO Purchase VALUES('S1001','Hardisk',4200,20,'2011/01/05',5,101,101)
+INSERT INTO Purchase VALUES('S1002','Cable',2800,50,'2011/01/10',15,102,102)
+INSERT INTO Purchase VALUES('S1003','Pen Drive',800,70,'2011/02/10',15,102,102)
+GO
+
+INSERT INTO Customers VALUES ('Ismail','420','420@gmail.com')
+INSERT INTO Customers VALUES ('Khalil','820','820@gmail.com')
+GO
+
+INSERT INTO Orders VALUES (2,'2011/05/02',0,NULL)
+Declare @id int
+SET @id = @@IDENTITY
+INSERT INTO OrderDetails VALUES (@id,'S1001',5,4000)
+INSERT INTO OrderDetails VALUES (@id,'S1002',10,4050)
+INSERT INTO OrderDetails VALUES (@id,'S1003',5,4050)
+DECLARE @S MONEY
+SELECT @S=Sum(SaleTotal) FROM OrderDetails WHERE ONO = @id
+UPDATE Orders SET GrandTotal = @S WHERE ONO = @id
+GO
+
+-- ==========================================================================================
+-- CREATING VIEW : vw_StockInfo
+-- ==========================================================================================
+CREATE VIEW vw_StockInfo
+AS
+SELECT DISTINCT s.PID, p.PName, s.SQty,s.SalesPrice
+FROM Purchase p INNER JOIN Stock s
+ON p.PID = s.PID
+GO
+
+-- ==========================================================================================
+-- CREATING VIEW : [Alphabetical list of products]
+-- ==========================================================================================
+CREATE VIEW dbo.[Alphabetical list of products]
+AS
+SELECT Purchase.PID, Purchase.PName, Purchase.SID, 
+       Purchase.CategoryID, Purchase.Qty, 
+       Purchase.UPrice, Purchase.RLevel, Purchase.PDate, Categories.CategoryName
+FROM   Categories INNER JOIN Purchase ON Categories.CategoryID = Purchase.CategoryID
+GO
+
+-- ==========================================================================================
+-- CREATING VIEW : [Product Sales for 2011]
+-- ==========================================================================================
+CREATE VIEW dbo.[Product Sales for 2011]
+AS
+SELECT Categories.CategoryName, Purchase.PName, 
+       SUM(CONVERT(money, ([OrderDetails].SalePrice * [OrderDetails].SaleQty))) AS ProductSales
+FROM Categories INNER JOIN Purchase 
+ON Categories.CategoryID = Purchase.CategoryID 
+INNER JOIN Orders INNER JOIN [OrderDetails] 
+ON Orders.ONO = [OrderDetails].ONO 
+ON Purchase.PID = [OrderDetails].PID
+WHERE  (Orders.ODate BETWEEN '20110101' AND '20111231')
+GROUP BY Categories.CategoryName, Purchase.PName
+GO
+
+-- ==========================================================================================
+-- CREATING VIEW : [Order Subtotals]
+-- ==========================================================================================
+CREATE VIEW [Order Subtotals]
+AS
+SELECT ONO, SUM(SalePrice * SaleQty) AS Subtotal
+FROM [OrderDetails]
+GROUP BY ONO
+GO
+
+-- ==========================================================================================
+-- CREATING VIEW : [Products Above Average Price]
+-- ==========================================================================================
+CREATE VIEW [Products Above Average Price]
+AS
+SELECT PName, UPrice FROM Purchase
+WHERE  (UPrice > (SELECT AVG(UPrice) FROM Purchase))
+GO
+
+-- ==========================================================================================
+-- CREATING VIEW : [Products by Category]
+-- ==========================================================================================
+CREATE VIEW [Products by Category]
+AS
+SELECT Categories.CategoryName, Purchase.PName, Purchase.Qty
+FROM Categories INNER JOIN Purchase 
+ON Categories.CategoryID = Purchase.CategoryID
+GO
+
+-- ==========================================================================================
+-- CREATING VIEW : [Category Sales for 2011]
+-- ==========================================================================================
+CREATE VIEW [Category Sales for 2011]
+AS
+SELECT CategoryName, SUM(ProductSales) AS CategorySales
+FROM [Product Sales for 2011]
+GROUP BY CategoryName
+GO
+
+-- ==========================================================================================
+-- CREATING VIEW : [Sales Totals by Amount]
+-- ==========================================================================================
+CREATE VIEW [Sales Totals by Amount]
+AS
+SELECT [Order Subtotals].Subtotal AS SaleAmount, Orders.ONO,Orders.ODate
+FROM  Orders INNER JOIN [Order Subtotals] 
+ON Orders.ONO = [Order Subtotals].ONO 
+GO
+
+
+--USE Master
+--GO
+--DROP DATABASE SalesSystem19
+--GO
+

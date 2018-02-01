@@ -1,0 +1,1027 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="projectDemoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Categories">
+          <Key>
+            <PropertyRef Name="CategoryID" />
+          </Key>
+          <Property Name="CategoryID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CategoryName" Type="varchar" MaxLength="40" />
+        </EntityType>
+        <EntityType Name="Customers">
+          <Key>
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="CustomerID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerName" Type="varchar" MaxLength="50" />
+          <Property Name="Phone" Type="varchar" MaxLength="15" />
+          <Property Name="Email" Type="varchar" MaxLength="40" />
+        </EntityType>
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="dId" />
+          </Key>
+          <Property Name="dId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="eId" />
+          </Key>
+          <Property Name="eId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="DOJ" Type="date" />
+          <Property Name="Salary" Type="money" />
+          <Property Name="Photo" Type="varchar" MaxLength="50" />
+          <Property Name="dId" Type="int" />
+        </EntityType>
+        <EntityType Name="OrderDetails">
+          <Key>
+            <PropertyRef Name="ONO" />
+            <PropertyRef Name="PID" />
+          </Key>
+          <Property Name="ONO" Type="int" Nullable="false" />
+          <Property Name="PID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="SaleQty" Type="int" />
+          <Property Name="SalePrice" Type="money" />
+          <Property Name="SaleTotal" Type="money" StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="ONO" />
+          </Key>
+          <Property Name="ONO" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerID" Type="int" />
+          <Property Name="ODate" Type="datetime" />
+          <Property Name="GrandTotal" Type="money" />
+          <Property Name="ShippedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Purchase">
+          <Key>
+            <PropertyRef Name="PNO" />
+          </Key>
+          <Property Name="PNO" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="PName" Type="varchar" MaxLength="40" />
+          <Property Name="UPrice" Type="money" />
+          <Property Name="Qty" Type="int" />
+          <Property Name="PDate" Type="datetime" />
+          <Property Name="RLevel" Type="int" />
+          <Property Name="CategoryID" Type="int" />
+        </EntityType>
+        <EntityType Name="Stock">
+          <Key>
+            <PropertyRef Name="PID" />
+          </Key>
+          <Property Name="PID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="SQty" Type="int" />
+          <Property Name="RLevel" Type="int" />
+          <Property Name="SalesPrice" Type="money" />
+        </EntityType>
+        <EntityType Name="UserDetails">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="UserPass" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="UserRole" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'C:\USERS\USER\DESKTOP\DEMOWEBSITE36\APP_DATA\PROJECTDEMO.MDF.dbo.Category Sales for 2011' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="Category Sales for 2011">
+          <Property Name="CategoryName" Type="varchar" MaxLength="40" />
+          <Property Name="CategorySales" Type="money" />
+        </EntityType>-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'C:\USERS\USER\DESKTOP\DEMOWEBSITE36\APP_DATA\PROJECTDEMO.MDF.dbo.EmpByDept' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="EmpByDept">
+          <Key>
+            <PropertyRef Name="eId" />
+          </Key>
+          <Property Name="eId" Type="int" Nullable="false" />
+          <Property Name="empName" Type="varchar" MaxLength="50" />
+          <Property Name="Salary" Type="money" />
+          <Property Name="DateOfJoin" Type="date" />
+          <Property Name="Photo" Type="varchar" MaxLength="50" />
+          <Property Name="dName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'C:\USERS\USER\DESKTOP\DEMOWEBSITE36\APP_DATA\PROJECTDEMO.MDF.dbo.Order Subtotals' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Order Subtotals">
+          <Key>
+            <PropertyRef Name="ONO" />
+          </Key>
+          <Property Name="ONO" Type="int" Nullable="false" />
+          <Property Name="Subtotal" Type="money" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'C:\USERS\USER\DESKTOP\DEMOWEBSITE36\APP_DATA\PROJECTDEMO.MDF.dbo.Product Sales for 2011' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="Product Sales for 2011">
+          <Property Name="CategoryName" Type="varchar" MaxLength="40" />
+          <Property Name="PName" Type="varchar" MaxLength="40" />
+          <Property Name="ProductSales" Type="money" />
+        </EntityType>-->
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'C:\USERS\USER\DESKTOP\DEMOWEBSITE36\APP_DATA\PROJECTDEMO.MDF.dbo.Products Above Average Price' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="Products Above Average Price">
+          <Property Name="PName" Type="varchar" MaxLength="40" />
+          <Property Name="UPrice" Type="money" />
+        </EntityType>-->
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'C:\USERS\USER\DESKTOP\DEMOWEBSITE36\APP_DATA\PROJECTDEMO.MDF.dbo.Products by Category' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="Products by Category">
+          <Property Name="CategoryName" Type="varchar" MaxLength="40" />
+          <Property Name="PName" Type="varchar" MaxLength="40" />
+          <Property Name="Qty" Type="int" />
+        </EntityType>-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'C:\USERS\USER\DESKTOP\DEMOWEBSITE36\APP_DATA\PROJECTDEMO.MDF.dbo.Sales Totals by Amount' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Sales Totals by Amount">
+          <Key>
+            <PropertyRef Name="ONO" />
+          </Key>
+          <Property Name="SaleAmount" Type="money" />
+          <Property Name="ONO" Type="int" Nullable="false" />
+          <Property Name="ODate" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'C:\USERS\USER\DESKTOP\DEMOWEBSITE36\APP_DATA\PROJECTDEMO.MDF.dbo.vw_StockInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_StockInfo">
+          <Key>
+            <PropertyRef Name="PID" />
+          </Key>
+          <Property Name="PID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="PName" Type="varchar" MaxLength="40" />
+          <Property Name="SQty" Type="int" />
+          <Property Name="SalesPrice" Type="money" />
+        </EntityType>
+        <Association Name="FK__OrderDetail__ONO__4222D4EF">
+          <End Role="Orders" Type="Self.Orders" Multiplicity="1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="ONO" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="ONO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OrderDetail__PID__4316F928">
+          <End Role="Stock" Type="Self.Stock" Multiplicity="1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stock">
+              <PropertyRef Name="PID" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="PID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Orders__Customer__3F466844">
+          <End Role="Customers" Type="Self.Customers" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customers">
+              <PropertyRef Name="CustomerID" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="CustomerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Purchase__Catego__656C112C">
+          <End Role="Categories" Type="Self.Categories" Multiplicity="0..1" />
+          <End Role="Purchase" Type="Self.Purchase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="CategoryID" />
+            </Principal>
+            <Dependent Role="Purchase">
+              <PropertyRef Name="CategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Employee_ToTable">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="dId" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="dId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="CategoriesDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CategoryID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="CategoriesGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="CategoriesGetRecord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CategoryID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="CategoriesInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CategoryName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="CategoriesUpdate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CategoryID" Type="int" Mode="In" />
+          <Parameter Name="CategoryName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="CustomersDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="CustomersGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="CustomersGetRecord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="CustomersInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerName" Type="varchar" Mode="In" />
+          <Parameter Name="Phone" Type="varchar" Mode="In" />
+          <Parameter Name="Email" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="CustomersUpdate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+          <Parameter Name="CustomerName" Type="varchar" Mode="In" />
+          <Parameter Name="Phone" Type="varchar" Mode="In" />
+          <Parameter Name="Email" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="OrderDetailsDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ONO" Type="int" Mode="In" />
+          <Parameter Name="PID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="OrderDetailsGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="OrderDetailsGetRecord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ONO" Type="int" Mode="In" />
+          <Parameter Name="PID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="OrderDetailsInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ONO" Type="int" Mode="In" />
+          <Parameter Name="PID" Type="varchar" Mode="In" />
+          <Parameter Name="SaleQty" Type="int" Mode="In" />
+          <Parameter Name="SalePrice" Type="money" Mode="In" />
+        </Function>
+        <Function Name="OrderDetailsUpdate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ONO" Type="int" Mode="In" />
+          <Parameter Name="PID" Type="varchar" Mode="In" />
+          <Parameter Name="SaleQty" Type="int" Mode="In" />
+          <Parameter Name="SalePrice" Type="money" Mode="In" />
+        </Function>
+        <Function Name="OrdersDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ONO" Type="int" Mode="In" />
+        </Function>
+        <Function Name="OrdersGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="OrdersGetRecord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ONO" Type="int" Mode="In" />
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="OrdersInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+          <Parameter Name="ODate" Type="datetime" Mode="In" />
+          <Parameter Name="GrandTotal" Type="money" Mode="In" />
+          <Parameter Name="ShippedDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="OrdersUpdate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ONO" Type="int" Mode="In" />
+          <Parameter Name="CustomerID" Type="int" Mode="In" />
+          <Parameter Name="ODate" Type="datetime" Mode="In" />
+          <Parameter Name="GrandTotal" Type="money" Mode="In" />
+          <Parameter Name="ShippedDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="PurchaseDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PNO" Type="int" Mode="In" />
+        </Function>
+        <Function Name="PurchaseGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="PurchaseGetRecord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PNO" Type="int" Mode="In" />
+          <Parameter Name="SID" Type="int" Mode="In" />
+          <Parameter Name="CategoryID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="PurchaseInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PID" Type="varchar" Mode="In" />
+          <Parameter Name="PName" Type="varchar" Mode="In" />
+          <Parameter Name="UPrice" Type="money" Mode="In" />
+          <Parameter Name="Qty" Type="int" Mode="In" />
+          <Parameter Name="PDate" Type="datetime" Mode="In" />
+          <Parameter Name="RLevel" Type="int" Mode="In" />
+          <Parameter Name="SID" Type="int" Mode="In" />
+          <Parameter Name="CategoryID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="PurchaseUpdate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PNO" Type="int" Mode="In" />
+          <Parameter Name="PID" Type="varchar" Mode="In" />
+          <Parameter Name="PName" Type="varchar" Mode="In" />
+          <Parameter Name="UPrice" Type="money" Mode="In" />
+          <Parameter Name="Qty" Type="int" Mode="In" />
+          <Parameter Name="PDate" Type="datetime" Mode="In" />
+          <Parameter Name="RLevel" Type="int" Mode="In" />
+          <Parameter Name="SID" Type="int" Mode="In" />
+          <Parameter Name="CategoryID" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="projectDemoModelStoreContainer">
+          <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Employee" EntityType="Self.Employee" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrderDetails" EntityType="Self.OrderDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Purchase" EntityType="Self.Purchase" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Stock" EntityType="Self.Stock" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserDetails" EntityType="Self.UserDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmpByDept" EntityType="Self.EmpByDept" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [EmpByDept].[eId] AS [eId], 
+    [EmpByDept].[empName] AS [empName], 
+    [EmpByDept].[Salary] AS [Salary], 
+    [EmpByDept].[DateOfJoin] AS [DateOfJoin], 
+    [EmpByDept].[Photo] AS [Photo], 
+    [EmpByDept].[dName] AS [dName]
+    FROM [dbo].[EmpByDept] AS [EmpByDept]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Order Subtotals" EntityType="Self.Order Subtotals" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Order Subtotals].[ONO] AS [ONO], 
+    [Order Subtotals].[Subtotal] AS [Subtotal]
+    FROM [dbo].[Order Subtotals] AS [Order Subtotals]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Sales Totals by Amount" EntityType="Self.Sales Totals by Amount" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Sales Totals by Amount].[SaleAmount] AS [SaleAmount], 
+    [Sales Totals by Amount].[ONO] AS [ONO], 
+    [Sales Totals by Amount].[ODate] AS [ODate]
+    FROM [dbo].[Sales Totals by Amount] AS [Sales Totals by Amount]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_StockInfo" EntityType="Self.vw_StockInfo" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_StockInfo].[PID] AS [PID], 
+    [vw_StockInfo].[PName] AS [PName], 
+    [vw_StockInfo].[SQty] AS [SQty], 
+    [vw_StockInfo].[SalesPrice] AS [SalesPrice]
+    FROM [dbo].[vw_StockInfo] AS [vw_StockInfo]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__OrderDetail__ONO__4222D4EF" Association="Self.FK__OrderDetail__ONO__4222D4EF">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OrderDetail__PID__4316F928" Association="Self.FK__OrderDetail__PID__4316F928">
+            <End Role="Stock" EntitySet="Stock" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Orders__Customer__3F466844" Association="Self.FK__Orders__Customer__3F466844">
+            <End Role="Customers" EntitySet="Customers" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Purchase__Catego__656C112C" Association="Self.FK__Purchase__Catego__656C112C">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Purchase" EntitySet="Purchase" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Employee_ToTable" Association="Self.FK_Employee_ToTable">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Employee" EntitySet="Employee" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="projectDemoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Department">
+          <Key>
+            <PropertyRef Name="dId" />
+          </Key>
+          <Property Name="dId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Employees" Relationship="Self.FK_Employee_ToTable" FromRole="Department" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="eId" />
+          </Key>
+          <Property Name="eId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DOJ" Type="DateTime" Precision="0" />
+          <Property Name="Salary" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Photo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="dId" Type="Int32" />
+          <NavigationProperty Name="Department" Relationship="Self.FK_Employee_ToTable" FromRole="Employee" ToRole="Department" />
+        </EntityType>
+        <Association Name="FK_Employee_ToTable">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Employee" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="dId" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="dId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="projectDemoEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Departments" EntityType="Self.Department" />
+          <EntitySet Name="Employees" EntityType="Self.Employee" />
+          <AssociationSet Name="FK_Employee_ToTable" Association="Self.FK_Employee_ToTable">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <EntitySet Name="EmpByDepts" EntityType="projectDemoModel.EmpByDept" />
+          <EntitySet Name="Categories" EntityType="projectDemoModel.Category" />
+          <EntitySet Name="Customers" EntityType="projectDemoModel.Customer" />
+          <EntitySet Name="OrderDetails" EntityType="projectDemoModel.OrderDetail" />
+          <EntitySet Name="Orders" EntityType="projectDemoModel.Order" />
+          <EntitySet Name="Purchases" EntityType="projectDemoModel.Purchase" />
+          <EntitySet Name="Stocks" EntityType="projectDemoModel.Stock" />
+          <EntitySet Name="UserDetails" EntityType="projectDemoModel.UserDetail" />
+          <EntitySet Name="Order_Subtotals" EntityType="projectDemoModel.Order_Subtotal" />
+          <EntitySet Name="Sales_Totals_by_Amounts" EntityType="projectDemoModel.Sales_Totals_by_Amount" />
+          <EntitySet Name="vw_StockInfo" EntityType="projectDemoModel.vw_StockInfo" />
+          <AssociationSet Name="FK__Purchase__Catego__656C112C" Association="projectDemoModel.FK__Purchase__Catego__656C112C">
+            <End Role="Category" EntitySet="Categories" />
+            <End Role="Purchase" EntitySet="Purchases" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Orders__Customer__3F466844" Association="projectDemoModel.FK__Orders__Customer__3F466844">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OrderDetail__ONO__4222D4EF" Association="projectDemoModel.FK__OrderDetail__ONO__4222D4EF">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="OrderDetail" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OrderDetail__PID__4316F928" Association="projectDemoModel.FK__OrderDetail__PID__4316F928">
+            <End Role="Stock" EntitySet="Stocks" />
+            <End Role="OrderDetail" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <FunctionImport Name="CategoriesDelete">
+          <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="CategoriesGetAll" ReturnType="Collection(projectDemoModel.CategoriesGetAll_Result)" />
+          <FunctionImport Name="CategoriesGetRecord" ReturnType="Collection(projectDemoModel.CategoriesGetRecord_Result)">
+          <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="CategoriesInsert">
+            <Parameter Name="CategoryName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CategoriesUpdate">
+            <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+            <Parameter Name="CategoryName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CustomersDelete">
+          <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="CustomersGetAll" ReturnType="Collection(projectDemoModel.CustomersGetAll_Result)" />
+          <FunctionImport Name="CustomersGetRecord" ReturnType="Collection(projectDemoModel.CustomersGetRecord_Result)">
+          <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="CustomersInsert">
+            <Parameter Name="CustomerName" Mode="In" Type="String" />
+            <Parameter Name="Phone" Mode="In" Type="String" />
+            <Parameter Name="Email" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CustomersUpdate">
+            <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerName" Mode="In" Type="String" />
+            <Parameter Name="Phone" Mode="In" Type="String" />
+            <Parameter Name="Email" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="OrderDetailsDelete">
+            <Parameter Name="ONO" Mode="In" Type="Int32" />
+            <Parameter Name="PID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="OrderDetailsGetAll" ReturnType="Collection(projectDemoModel.OrderDetailsGetAll_Result)" />
+          <FunctionImport Name="OrderDetailsGetRecord" ReturnType="Collection(projectDemoModel.OrderDetailsGetRecord_Result)">
+            <Parameter Name="ONO" Mode="In" Type="Int32" />
+            <Parameter Name="PID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="OrderDetailsInsert">
+            <Parameter Name="ONO" Mode="In" Type="Int32" />
+            <Parameter Name="PID" Mode="In" Type="String" />
+            <Parameter Name="SaleQty" Mode="In" Type="Int32" />
+            <Parameter Name="SalePrice" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="OrderDetailsUpdate">
+            <Parameter Name="ONO" Mode="In" Type="Int32" />
+            <Parameter Name="PID" Mode="In" Type="String" />
+            <Parameter Name="SaleQty" Mode="In" Type="Int32" />
+            <Parameter Name="SalePrice" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="OrdersDelete">
+          <Parameter Name="ONO" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="OrdersGetAll" ReturnType="Collection(projectDemoModel.OrdersGetAll_Result)" />
+          <FunctionImport Name="OrdersGetRecord" ReturnType="Collection(projectDemoModel.OrdersGetRecord_Result)">
+            <Parameter Name="ONO" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="OrdersInsert">
+            <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+            <Parameter Name="ODate" Mode="In" Type="DateTime" />
+            <Parameter Name="GrandTotal" Mode="In" Type="Decimal" />
+            <Parameter Name="ShippedDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="OrdersUpdate">
+            <Parameter Name="ONO" Mode="In" Type="Int32" />
+            <Parameter Name="CustomerID" Mode="In" Type="Int32" />
+            <Parameter Name="ODate" Mode="In" Type="DateTime" />
+            <Parameter Name="GrandTotal" Mode="In" Type="Decimal" />
+            <Parameter Name="ShippedDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="PurchaseDelete">
+          <Parameter Name="PNO" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="PurchaseGetAll" />
+          <FunctionImport Name="PurchaseGetRecord">
+            <Parameter Name="PNO" Mode="In" Type="Int32" />
+            <Parameter Name="SID" Mode="In" Type="Int32" />
+            <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="PurchaseInsert">
+            <Parameter Name="PID" Mode="In" Type="String" />
+            <Parameter Name="PName" Mode="In" Type="String" />
+            <Parameter Name="UPrice" Mode="In" Type="Decimal" />
+            <Parameter Name="Qty" Mode="In" Type="Int32" />
+            <Parameter Name="PDate" Mode="In" Type="DateTime" />
+            <Parameter Name="RLevel" Mode="In" Type="Int32" />
+            <Parameter Name="SID" Mode="In" Type="Int32" />
+            <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="PurchaseUpdate">
+            <Parameter Name="PNO" Mode="In" Type="Int32" />
+            <Parameter Name="PID" Mode="In" Type="String" />
+            <Parameter Name="PName" Mode="In" Type="String" />
+            <Parameter Name="UPrice" Mode="In" Type="Decimal" />
+            <Parameter Name="Qty" Mode="In" Type="Int32" />
+            <Parameter Name="PDate" Mode="In" Type="DateTime" />
+            <Parameter Name="RLevel" Mode="In" Type="Int32" />
+            <Parameter Name="SID" Mode="In" Type="Int32" />
+            <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="EmpByDept">
+          <Key>
+            <PropertyRef Name="eId" />
+          </Key>
+          <Property Name="eId" Type="Int32" Nullable="false" />
+          <Property Name="empName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Salary" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="DateOfJoin" Type="DateTime" Precision="0" />
+          <Property Name="Photo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="dName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="CategoryID" />
+          </Key>
+          <Property Name="CategoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CategoryName" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Purchases" Relationship="projectDemoModel.FK__Purchase__Catego__656C112C" FromRole="Category" ToRole="Purchase" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="CustomerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Orders" Relationship="projectDemoModel.FK__Orders__Customer__3F466844" FromRole="Customer" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="OrderDetail">
+          <Key>
+            <PropertyRef Name="ONO" />
+            <PropertyRef Name="PID" />
+          </Key>
+          <Property Name="ONO" Type="Int32" Nullable="false" />
+          <Property Name="PID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="SaleQty" Type="Int32" />
+          <Property Name="SalePrice" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="SaleTotal" Type="Decimal" Precision="19" Scale="4" annotation:StoreGeneratedPattern="Computed" />
+          <NavigationProperty Name="Order" Relationship="projectDemoModel.FK__OrderDetail__ONO__4222D4EF" FromRole="OrderDetail" ToRole="Order" />
+          <NavigationProperty Name="Stock" Relationship="projectDemoModel.FK__OrderDetail__PID__4316F928" FromRole="OrderDetail" ToRole="Stock" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="ONO" />
+          </Key>
+          <Property Name="ONO" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int32" />
+          <Property Name="ODate" Type="DateTime" Precision="3" />
+          <Property Name="GrandTotal" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ShippedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Customer" Relationship="projectDemoModel.FK__Orders__Customer__3F466844" FromRole="Order" ToRole="Customer" />
+          <NavigationProperty Name="OrderDetails" Relationship="projectDemoModel.FK__OrderDetail__ONO__4222D4EF" FromRole="Order" ToRole="OrderDetail" />
+        </EntityType>
+        <EntityType Name="Purchase">
+          <Key>
+            <PropertyRef Name="PNO" />
+          </Key>
+          <Property Name="PNO" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="PName" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="UPrice" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Qty" Type="Int32" />
+          <Property Name="PDate" Type="DateTime" Precision="3" />
+          <Property Name="RLevel" Type="Int32" />
+          <Property Name="CategoryID" Type="Int32" />
+          <NavigationProperty Name="Category" Relationship="projectDemoModel.FK__Purchase__Catego__656C112C" FromRole="Purchase" ToRole="Category" />
+        </EntityType>
+        <EntityType Name="Stock">
+          <Key>
+            <PropertyRef Name="PID" />
+          </Key>
+          <Property Name="PID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="SQty" Type="Int32" />
+          <Property Name="RLevel" Type="Int32" />
+          <Property Name="SalesPrice" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="OrderDetails" Relationship="projectDemoModel.FK__OrderDetail__PID__4316F928" FromRole="Stock" ToRole="OrderDetail" />
+        </EntityType>
+        <EntityType Name="UserDetail">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="UserPass" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="UserRole" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Order_Subtotal">
+          <Key>
+            <PropertyRef Name="ONO" />
+          </Key>
+          <Property Name="ONO" Type="Int32" Nullable="false" />
+          <Property Name="Subtotal" Type="Decimal" Precision="19" Scale="4" />
+        </EntityType>
+        <EntityType Name="Sales_Totals_by_Amount">
+          <Key>
+            <PropertyRef Name="ONO" />
+          </Key>
+          <Property Name="SaleAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ONO" Type="Int32" Nullable="false" />
+          <Property Name="ODate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="vw_StockInfo">
+          <Key>
+            <PropertyRef Name="PID" />
+          </Key>
+          <Property Name="PID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="PName" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="SQty" Type="Int32" />
+          <Property Name="SalesPrice" Type="Decimal" Precision="19" Scale="4" />
+        </EntityType>
+        <Association Name="FK__Purchase__Catego__656C112C">
+          <End Type="projectDemoModel.Category" Role="Category" Multiplicity="0..1" />
+          <End Type="projectDemoModel.Purchase" Role="Purchase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="CategoryID" />
+            </Principal>
+            <Dependent Role="Purchase">
+              <PropertyRef Name="CategoryID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Orders__Customer__3F466844">
+          <End Type="projectDemoModel.Customer" Role="Customer" Multiplicity="0..1" />
+          <End Type="projectDemoModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerID" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="CustomerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OrderDetail__ONO__4222D4EF">
+          <End Type="projectDemoModel.Order" Role="Order" Multiplicity="1" />
+          <End Type="projectDemoModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="ONO" />
+            </Principal>
+            <Dependent Role="OrderDetail">
+              <PropertyRef Name="ONO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OrderDetail__PID__4316F928">
+          <End Type="projectDemoModel.Stock" Role="Stock" Multiplicity="1" />
+          <End Type="projectDemoModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stock">
+              <PropertyRef Name="PID" />
+            </Principal>
+            <Dependent Role="OrderDetail">
+              <PropertyRef Name="PID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="CategoriesGetAll_Result">
+          <Property Type="Int32" Name="CategoryID" Nullable="false" />
+          <Property Type="String" Name="CategoryName" Nullable="true" MaxLength="40" />
+        </ComplexType>
+        <ComplexType Name="CategoriesGetRecord_Result">
+          <Property Type="Int32" Name="CategoryID" Nullable="false" />
+          <Property Type="String" Name="CategoryName" Nullable="true" MaxLength="40" />
+        </ComplexType>
+        <ComplexType Name="CustomersGetAll_Result">
+          <Property Type="Int32" Name="CustomerID" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Phone" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="Email" Nullable="true" MaxLength="40" />
+        </ComplexType>
+        <ComplexType Name="CustomersGetRecord_Result">
+          <Property Type="Int32" Name="CustomerID" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Phone" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="Email" Nullable="true" MaxLength="40" />
+        </ComplexType>
+        <ComplexType Name="OrderDetailsGetAll_Result">
+          <Property Type="Int32" Name="ONO" Nullable="false" />
+          <Property Type="String" Name="PID" Nullable="false" MaxLength="10" />
+          <Property Type="Int32" Name="SaleQty" Nullable="true" />
+          <Property Type="Decimal" Name="SalePrice" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="SaleTotal" Nullable="true" Precision="19" />
+        </ComplexType>
+        <ComplexType Name="OrderDetailsGetRecord_Result">
+          <Property Type="Int32" Name="ONO" Nullable="false" />
+          <Property Type="String" Name="PID" Nullable="false" MaxLength="10" />
+          <Property Type="Int32" Name="SaleQty" Nullable="true" />
+          <Property Type="Decimal" Name="SalePrice" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="SaleTotal" Nullable="true" Precision="19" />
+        </ComplexType>
+        <ComplexType Name="OrdersGetAll_Result">
+          <Property Type="Int32" Name="ONO" Nullable="false" />
+          <Property Type="Int32" Name="CustomerID" Nullable="true" />
+          <Property Type="DateTime" Name="ODate" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="GrandTotal" Nullable="true" Precision="19" />
+          <Property Type="DateTime" Name="ShippedDate" Nullable="true" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="OrdersGetRecord_Result">
+          <Property Type="Int32" Name="ONO" Nullable="false" />
+          <Property Type="Int32" Name="CustomerID" Nullable="true" />
+          <Property Type="DateTime" Name="ODate" Nullable="true" Precision="23" />
+          <Property Type="Decimal" Name="GrandTotal" Nullable="true" Precision="19" />
+          <Property Type="DateTime" Name="ShippedDate" Nullable="true" Precision="23" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="projectDemoModelStoreContainer" CdmEntityContainer="projectDemoEntities">
+          <EntitySetMapping Name="Departments">
+            <EntityTypeMapping TypeName="projectDemoModel.Department">
+              <MappingFragment StoreEntitySet="Department">
+                <ScalarProperty Name="dId" ColumnName="dId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="projectDemoModel.Employee">
+              <MappingFragment StoreEntitySet="Employee">
+                <ScalarProperty Name="eId" ColumnName="eId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DOJ" ColumnName="DOJ" />
+                <ScalarProperty Name="Salary" ColumnName="Salary" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="dId" ColumnName="dId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmpByDepts">
+            <EntityTypeMapping TypeName="projectDemoModel.EmpByDept">
+              <MappingFragment StoreEntitySet="EmpByDept">
+                <ScalarProperty Name="dName" ColumnName="dName" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="DateOfJoin" ColumnName="DateOfJoin" />
+                <ScalarProperty Name="Salary" ColumnName="Salary" />
+                <ScalarProperty Name="empName" ColumnName="empName" />
+                <ScalarProperty Name="eId" ColumnName="eId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="projectDemoModel.Category">
+              <MappingFragment StoreEntitySet="Categories">
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+                <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="projectDemoModel.Customer">
+              <MappingFragment StoreEntitySet="Customers">
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrderDetails">
+            <EntityTypeMapping TypeName="projectDemoModel.OrderDetail">
+              <MappingFragment StoreEntitySet="OrderDetails">
+                <ScalarProperty Name="SaleTotal" ColumnName="SaleTotal" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+                <ScalarProperty Name="SaleQty" ColumnName="SaleQty" />
+                <ScalarProperty Name="PID" ColumnName="PID" />
+                <ScalarProperty Name="ONO" ColumnName="ONO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="projectDemoModel.Order">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="ShippedDate" ColumnName="ShippedDate" />
+                <ScalarProperty Name="GrandTotal" ColumnName="GrandTotal" />
+                <ScalarProperty Name="ODate" ColumnName="ODate" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="ONO" ColumnName="ONO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Purchases">
+            <EntityTypeMapping TypeName="projectDemoModel.Purchase">
+              <MappingFragment StoreEntitySet="Purchase">
+                <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+                <ScalarProperty Name="RLevel" ColumnName="RLevel" />
+                <ScalarProperty Name="PDate" ColumnName="PDate" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="UPrice" ColumnName="UPrice" />
+                <ScalarProperty Name="PName" ColumnName="PName" />
+                <ScalarProperty Name="PID" ColumnName="PID" />
+                <ScalarProperty Name="PNO" ColumnName="PNO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stocks">
+            <EntityTypeMapping TypeName="projectDemoModel.Stock">
+              <MappingFragment StoreEntitySet="Stock">
+                <ScalarProperty Name="SalesPrice" ColumnName="SalesPrice" />
+                <ScalarProperty Name="RLevel" ColumnName="RLevel" />
+                <ScalarProperty Name="SQty" ColumnName="SQty" />
+                <ScalarProperty Name="PID" ColumnName="PID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserDetails">
+            <EntityTypeMapping TypeName="projectDemoModel.UserDetail">
+              <MappingFragment StoreEntitySet="UserDetails">
+                <ScalarProperty Name="UserRole" ColumnName="UserRole" />
+                <ScalarProperty Name="UserPass" ColumnName="UserPass" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Order_Subtotals">
+            <EntityTypeMapping TypeName="projectDemoModel.Order_Subtotal">
+              <MappingFragment StoreEntitySet="Order Subtotals">
+                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
+                <ScalarProperty Name="ONO" ColumnName="ONO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sales_Totals_by_Amounts">
+            <EntityTypeMapping TypeName="projectDemoModel.Sales_Totals_by_Amount">
+              <MappingFragment StoreEntitySet="Sales Totals by Amount">
+                <ScalarProperty Name="ODate" ColumnName="ODate" />
+                <ScalarProperty Name="ONO" ColumnName="ONO" />
+                <ScalarProperty Name="SaleAmount" ColumnName="SaleAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_StockInfo">
+            <EntityTypeMapping TypeName="projectDemoModel.vw_StockInfo">
+              <MappingFragment StoreEntitySet="vw_StockInfo">
+                <ScalarProperty Name="SalesPrice" ColumnName="SalesPrice" />
+                <ScalarProperty Name="SQty" ColumnName="SQty" />
+                <ScalarProperty Name="PName" ColumnName="PName" />
+                <ScalarProperty Name="PID" ColumnName="PID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="CategoriesDelete" FunctionName="projectDemoModel.Store.CategoriesDelete" />
+          <FunctionImportMapping FunctionImportName="CategoriesGetAll" FunctionName="projectDemoModel.Store.CategoriesGetAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="projectDemoModel.CategoriesGetAll_Result">
+                <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="CategoriesGetRecord" FunctionName="projectDemoModel.Store.CategoriesGetRecord">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="projectDemoModel.CategoriesGetRecord_Result">
+                <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="CategoriesInsert" FunctionName="projectDemoModel.Store.CategoriesInsert" />
+          <FunctionImportMapping FunctionImportName="CategoriesUpdate" FunctionName="projectDemoModel.Store.CategoriesUpdate" />
+          <FunctionImportMapping FunctionImportName="CustomersDelete" FunctionName="projectDemoModel.Store.CustomersDelete" />
+          <FunctionImportMapping FunctionImportName="CustomersGetAll" FunctionName="projectDemoModel.Store.CustomersGetAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="projectDemoModel.CustomersGetAll_Result">
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="CustomersGetRecord" FunctionName="projectDemoModel.Store.CustomersGetRecord">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="projectDemoModel.CustomersGetRecord_Result">
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="CustomersInsert" FunctionName="projectDemoModel.Store.CustomersInsert" />
+          <FunctionImportMapping FunctionImportName="CustomersUpdate" FunctionName="projectDemoModel.Store.CustomersUpdate" />
+          <FunctionImportMapping FunctionImportName="OrderDetailsDelete" FunctionName="projectDemoModel.Store.OrderDetailsDelete" />
+          <FunctionImportMapping FunctionImportName="OrderDetailsGetAll" FunctionName="projectDemoModel.Store.OrderDetailsGetAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="projectDemoModel.OrderDetailsGetAll_Result">
+                <ScalarProperty Name="ONO" ColumnName="ONO" />
+                <ScalarProperty Name="PID" ColumnName="PID" />
+                <ScalarProperty Name="SaleQty" ColumnName="SaleQty" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+                <ScalarProperty Name="SaleTotal" ColumnName="SaleTotal" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="OrderDetailsGetRecord" FunctionName="projectDemoModel.Store.OrderDetailsGetRecord">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="projectDemoModel.OrderDetailsGetRecord_Result">
+                <ScalarProperty Name="ONO" ColumnName="ONO" />
+                <ScalarProperty Name="PID" ColumnName="PID" />
+                <ScalarProperty Name="SaleQty" ColumnName="SaleQty" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+                <ScalarProperty Name="SaleTotal" ColumnName="SaleTotal" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="OrderDetailsInsert" FunctionName="projectDemoModel.Store.OrderDetailsInsert" />
+          <FunctionImportMapping FunctionImportName="OrderDetailsUpdate" FunctionName="projectDemoModel.Store.OrderDetailsUpdate" />
+          <FunctionImportMapping FunctionImportName="OrdersDelete" FunctionName="projectDemoModel.Store.OrdersDelete" />
+          <FunctionImportMapping FunctionImportName="OrdersGetAll" FunctionName="projectDemoModel.Store.OrdersGetAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="projectDemoModel.OrdersGetAll_Result">
+                <ScalarProperty Name="ONO" ColumnName="ONO" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="ODate" ColumnName="ODate" />
+                <ScalarProperty Name="GrandTotal" ColumnName="GrandTotal" />
+                <ScalarProperty Name="ShippedDate" ColumnName="ShippedDate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="OrdersGetRecord" FunctionName="projectDemoModel.Store.OrdersGetRecord">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="projectDemoModel.OrdersGetRecord_Result">
+                <ScalarProperty Name="ONO" ColumnName="ONO" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="ODate" ColumnName="ODate" />
+                <ScalarProperty Name="GrandTotal" ColumnName="GrandTotal" />
+                <ScalarProperty Name="ShippedDate" ColumnName="ShippedDate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="OrdersInsert" FunctionName="projectDemoModel.Store.OrdersInsert" />
+          <FunctionImportMapping FunctionImportName="OrdersUpdate" FunctionName="projectDemoModel.Store.OrdersUpdate" />
+          <FunctionImportMapping FunctionImportName="PurchaseDelete" FunctionName="projectDemoModel.Store.PurchaseDelete" />
+          <FunctionImportMapping FunctionImportName="PurchaseGetAll" FunctionName="projectDemoModel.Store.PurchaseGetAll" />
+          <FunctionImportMapping FunctionImportName="PurchaseGetRecord" FunctionName="projectDemoModel.Store.PurchaseGetRecord" />
+          <FunctionImportMapping FunctionImportName="PurchaseInsert" FunctionName="projectDemoModel.Store.PurchaseInsert" />
+          <FunctionImportMapping FunctionImportName="PurchaseUpdate" FunctionName="projectDemoModel.Store.PurchaseUpdate" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
